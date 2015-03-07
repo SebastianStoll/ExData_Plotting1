@@ -1,10 +1,13 @@
 # Reading in the csv-file
 data <- read.csv("household_power_consumption.txt", colClasses = "character", sep = ";")
 
-# Subsetting the input data to the required dates and converting
-# the Global_active_power column into numeric values
+# Subsetting the input data to the required dates,
+# and converting the Global_active_power column into numeric values, 
+# removing potential NA values
 periodData <- subset(data, Date %in% c("1/2/2007","2/2/2007"))
 periodData$Global_active_power <- as.numeric(periodData$Global_active_power)
+cleanPeriodData <- complete.cases(periodData$Global_active_power)
+periodData <- periodData[cleanPeriodData,]
 
 # Open the png device with the required widht/height, create the plot
 # and shut down the device again

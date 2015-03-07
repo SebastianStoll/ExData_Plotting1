@@ -5,13 +5,23 @@ data <- read.csv("household_power_consumption.txt", colClasses = "character", se
 # the Global_active_power column into numeric values
 periodData <- subset(data, Date %in% c("1/2/2007", "2/2/2007"))
 
-# Convert required metrics into numeric values and create a date time column
-# for a continuous plotting of the x values
+# Convert required metrics into numeric values and 
+# remove potential NAs
 periodData$Sub_metering_1 <- as.numeric(periodData$Sub_metering_1)
 periodData$Sub_metering_2 <- as.numeric(periodData$Sub_metering_2)
 periodData$Sub_metering_3 <- as.numeric(periodData$Sub_metering_3)
 periodData$Voltage <- as.numeric(periodData$Voltage)
 periodData$Global_reactive_power <- as.numeric(periodData$Global_reactive_power)
+
+cleanPeriodData <- complete.cases(periodData$Sub_metering_1, 
+                                  periodData$Sub_metering_2, 
+                                  periodData$Sub_metering_3,
+                                  periodData$Voltage,
+                                  periodData$Global_reactive_power)
+
+periodData <- periodData[cleanPeriodData,]
+
+# Create a date time column for a continuous plotting of the x values
 periodData$dateTime <- strptime(paste(periodData$Date, periodData$Time, sep = ' '), "%d/%m/%Y %H:%M:%S")
 
 # Open the png device with the required widht/height

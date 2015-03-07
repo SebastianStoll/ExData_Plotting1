@@ -2,14 +2,17 @@
 data <- read.csv("household_power_consumption.txt", colClasses = "character", sep = ";")
 
 # Subsetting the input data to the required dates and converting
-# the Global_active_power column into numeric values
 periodData <- subset(data, Date %in% c("1/2/2007", "2/2/2007"))
 
-# Convert global active power into a numeric value and create a date time column
-# for a continuous plotting of the x values
+# Convert submetering int numeric value 
+# and removal of potential NAs
 periodData$Sub_metering_1 <- as.numeric(periodData$Sub_metering_1)
 periodData$Sub_metering_2 <- as.numeric(periodData$Sub_metering_2)
 periodData$Sub_metering_3 <- as.numeric(periodData$Sub_metering_3)
+cleanPeriodData <- complete.cases(periodData$Sub_metering_1, periodData$Sub_metering_2, periodData$Sub_metering_3)
+periodData <- periodData[cleanPeriodData,]
+
+# create a date time column for the continuous plotting of x values
 periodData$dateTime <- strptime(paste(periodData$Date, periodData$Time, sep = ' '), "%d/%m/%Y %H:%M:%S")
 
 # Open the png device with the required widht/height, create the plot
